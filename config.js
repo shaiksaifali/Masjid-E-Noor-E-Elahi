@@ -6,10 +6,10 @@ window.MASJID_CONFIG = {
   name: 'Masjid-E-Noor-Elahi',
 
   // Community website project (bound to the "Public Website Data" sheet)
-  siteApi: 'PASTE-WEBSITE-WEB-APP-LINK-HERE',
+  siteApi: 'https://script.google.com/macros/s/AKfycbyL1bjp9J_8_-kV6_uqQQ3jMWZ7w0e8XKchkmGuPpHM6uVVKp5E6FAjD0m3jgZ4fBuC/exec',
 
   // Committee app (management system / ERP) project
-  appApi: 'PASTE-COMMITTEE-APP-WEB-APP-LINK-HERE',
+  appApi: 'https://script.google.com/macros/s/AKfycbziwfsHsmsvaaIAGPw0yBZuPzBAlrOqruU5d2-jGUVg4u-_1lUik-Z62rjXYEYn7aQM9g/exec',
 
   // Leave these as they are
   loginUrl: 'admin/',
