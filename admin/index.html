@@ -1528,9 +1528,12 @@ VIEWS.cdonations = { perm: 'income.create', fn: (el, params) => {
     { k: 'Message', l: 'Note', f: r => '<span class="small">' + esc(r.Message || '') + '</span>' },
     { k: 'Status', l: 'Status', f: r => esc(r.Status) + (r.VoucherNo ? '<div class="muted small">' + esc(r.VoucherNo) + '</div>' : '') + (r.VerifiedBy ? '<div class="muted small">' + esc(r.VerifiedBy) + (r.Note ? ': ' + esc(r.Note) : '') + '</div>' : '') }], rows, {
     csv: 'website-donations', empty: 'No donations here.',
-    actions: r => r.Status === 'New' ? (act('v', 'Verify & post', 'primary') + act('x', 'Reject', 'danger')) : (r.ReceiptID ? act('r', 'Receipt') : ''),
+    actions: r => r.Status === 'New' ? (act('v', 'Verify & post', 'primary') + act('x', 'Reject', 'danger')) : (r.Status === 'Verified' && r.ReceiptID ? (act('r', 'Receipt') + (r.Email ? act('m', 'Email') : '') + act('w', 'WhatsApp')) : ''),
     onAction: (a, r) => {
       if (a === 'r') return call('receipt.pdf', { ReceiptID: r.ReceiptID }).then(openPdf).catch(fail);
+      if (a === 'm') return ask('Email receipt', 'Email this receipt to ' + esc(r.Email) + '?', { ok: 'Send email' })
+        .then(v => v && call('receipt.email', { ReceiptID: r.ReceiptID, Email: r.Email }).then(() => toast('Receipt emailed.', 's')).catch(fail));
+      if (a === 'w') return waDonor(r);
       if (a === 'x') return ask('Reject donation', 'Reject this reported donation? It will not post to the accounts.', { input: 'Reason', ok: 'Reject' })
         .then(v => v && call('donations.reject', { DonID: r.DonID, Note: v === true ? 'Rejected' : v }).then(() => { toast('Rejected.', 's'); go('cdonations', { Status: status }); }).catch(fail));
       // verify: pick the income ledger + account the money landed in
@@ -1543,15 +1546,33 @@ VIEWS.cdonations = { perm: 'income.create', fn: (el, params) => {
           { n: 'LedgerID', l: 'Income head', t: 'select', req: true, o: inc.map(l => '<option value="' + l.LedgerID + '">' + esc(l.Name) + '</option>').join('') },
           { n: 'AccountID', l: 'Received into', t: 'select', req: true, o: accs.map(a2 => '<option value="' + a2.AccountID + '"' + (a2.AccountID === guessAcc.AccountID ? ' selected' : '') + '>' + esc(a2.Name) + '</option>').join('') },
           { n: 'Date', l: 'Date received', t: 'date', v: r.SubmittedAt ? r.SubmittedAt.slice(0, 10) : today() },
+          { n: 'emailReceipt', l: r.Email ? ('Email the receipt to ' + r.Email + ' now') : 'Email the receipt (no email on file)', t: 'checkbox', v: !!r.Email },
           { n: 'Note', l: 'Note (optional)', full: true }
         ], {}, 'Verify & post'), b => {
+          if (!r.Email) { const cb = $('input[name=emailReceipt]', b); if (cb) { cb.checked = false; cb.disabled = true; } }
           $('form', b).onsubmit = ev => { ev.preventDefault(); const f = readForm(ev.target);
-            call('donations.verify', { DonID: r.DonID, LedgerID: f.LedgerID, AccountID: f.AccountID, Date: f.Date, Note: f.Note })
-              .then(() => { closeModal(); toast('Posted to accounts. Receipt ready.', 's'); go('cdonations', { Status: status }); }).catch(fail); };
+            call('donations.verify', { DonID: r.DonID, LedgerID: f.LedgerID, AccountID: f.AccountID, Date: f.Date, Note: f.Note, emailReceipt: f.emailReceipt === true && !!r.Email })
+              .then(res => { closeModal();
+                toast((res && res.emailed) ? 'Posted. Receipt emailed to the donor.' : 'Posted to accounts. Receipt ready.', 's');
+                if (res && res.emailWarning) toast(res.emailWarning, 'e');
+                if (res && res.phone) setTimeout(() => waDonor({ Name: r.Name, Phone: res.phone, Amount: r.Amount, ReceiptNo: res.receiptNo }), 300);
+                go('cdonations', { Status: status });
+              }).catch(fail); };
         });
     }
   })).catch(fail);
 } };
+function waDonor(r) {
+  const ph = String(r.Phone || '').replace(/\D/g, ''); if (!ph) return toast('No phone number.', 'e');
+  const wa = ph.length === 10 ? '91' + ph : ph;
+  const site = (S.b.settings && S.b.settings.PUBLIC_SITE_URL) || '';
+  const amt = r.Amount ? '₹' + Number(r.Amount).toLocaleString('en-IN') : '';
+  const msg = 'Assalamu Alaikum ' + (r.Name || '') + ',\n\nJazakAllah Khair for your donation' + (amt ? ' of ' + amt : '') + ' to ' + ((S.b.settings && S.b.settings.MASJID_NAME) || 'the masjid') + '.' +
+    (r.ReceiptNo ? '\nYour receipt number is ' + r.ReceiptNo + '.' : '') +
+    (site ? '\nDownload your receipt: ' + site + ' (Donate → Download your receipt).' : '') +
+    '\n\nMay Allah accept it.';
+  window.open('https://wa.me/' + wa + '?text=' + encodeURIComponent(msg), '_blank');
+}
 function openPdf(r) { try { const bin = atob(r.data), arr = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i); const url = URL.createObjectURL(new Blob([arr], { type: r.mimeType })); window.open(url, '_blank'); setTimeout(() => URL.revokeObjectURL(url), 8000); } catch (e) { toast('Could not open the file.', 'e'); } }
 
 /* ---------- About Us / Contact: board & youth members ---------- */
