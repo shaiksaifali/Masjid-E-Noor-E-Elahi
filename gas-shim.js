@@ -1,5 +1,5 @@
 /*
- * gas-shim.js — lets the pages hosted on GitHub Pages talk to the two Google Apps Script projects.
+ * gas-shim.js — lets the pages hosted on GitHub Pages talk to the masjid's Google Apps Script project.
  * It provides the same "google.script.run" the pages use inside Google, but over HTTPS (fetch),
  * so the Google Apps Script banner never appears. All checks still happen on the Google side.
  */
@@ -25,13 +25,22 @@
       return j.r;
     });
   }
+  // Never wait forever: Google normally answers in 1-3 s (up to ~10 s after a quiet period).
+  function timed(url, opt, ms) {
+    var ctl = typeof AbortController === 'function' ? new AbortController() : null, timer;
+    if (ctl) opt.signal = ctl.signal;
+    return Promise.race([
+      fetch(url, opt),
+      new Promise(function (_, rej) { timer = setTimeout(function () { if (ctl) ctl.abort(); rej(new Error('The server is taking too long to answer. Please try again.')); }, ms); })
+    ]).then(function (r) { clearTimeout(timer); return r; }, function (e) { clearTimeout(timer); throw e; });
+  }
   function post(url, body) {
     return Promise.resolve().then(function () {
-      return fetch(url, { method: 'POST', redirect: 'follow', credentials: 'omit', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) });
+      return timed(url, { method: 'POST', redirect: 'follow', credentials: 'omit', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) }, 60000);
     }).then(read).catch(function (e) { throw friendly(e); });
   }
   function get(url) {
-    return Promise.resolve().then(function () { return fetch(url, { redirect: 'follow', credentials: 'omit' }); })
+    return Promise.resolve().then(function () { return timed(url, { redirect: 'follow', credentials: 'omit' }, 25000); })
       .then(read).catch(function (e) { throw friendly(e); });
   }
   var API = {
