@@ -48,6 +48,10 @@
     apiLogin: function (email, password, boot) { return post(need(LINK), { fn: 'apiLogin', email: email, password: password, boot: boot === true }); },
     getSnapshot: function () { return get(need(LINK) + '?api=snapshot'); },
     submitRequest: function (form) { return post(need(LINK), { fn: 'submitRequest', form: form }); },
+    submitDonation: function (form) { return post(need(LINK), { fn: 'submitDonation', form: form }); },
+    getTeam: function () { return get(need(LINK) + '?api=team'); },
+    bumpVisit: function () { return get(need(LINK) + '?api=visit'); },
+    donationReceipt: function (ref, phone) { return get(need(LINK) + '?api=donationReceipt&ref=' + encodeURIComponent(ref) + '&phone=' + encodeURIComponent(phone)); },
     appInfo: function () { return get(need(LINK) + '?api=info'); }
   };
   window.MASJID_API = API;

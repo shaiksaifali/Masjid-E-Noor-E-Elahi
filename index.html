@@ -25,7 +25,7 @@ a{color:var(--g2)}
 .hero h1{margin:0;font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hero .sub{font-size:12.5px;opacity:.9}
 .lang{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:5px 14px;cursor:pointer;font:inherit;font-family:"Noto Naskh Arabic",Amiri,serif}
 [dir=rtl] .lang{font-family:system-ui,sans-serif}
-.tabs{max-width:1050px;margin:0 auto;display:flex;gap:2px;overflow-x:auto;padding:0 10px;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
+.tabs{max-width:1050px;margin:0 auto;display:flex;gap:2px;overflow-x:auto;padding:0 10px;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 94%,transparent);mask-image:linear-gradient(90deg,#000 94%,transparent)}.tabs::-webkit-scrollbar{display:none}
 .tabs button{background:none;border:0;color:#d6eadf;padding:9px 12px;font:inherit;font-size:14px;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent}
 .tabs button.on{color:#fff;border-bottom-color:var(--gold);font-weight:600}
 .card{background:#fff;border:1px solid var(--bd);border-radius:14px;padding:16px;margin-bottom:14px}
@@ -140,6 +140,20 @@ body{background:#f4f6f2 radial-gradient(circle at 20% 0%,#e9f3ec 0,transparent 4
 .hd-ar{font-size:1.35em;line-height:2}
 .hd-full{font-size:1.25em;line-height:2.1;margin:8px 0}
 .hnum{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin:6px 0}.hnum label{margin:0;flex:1;min-width:160px}.hnum .btn{min-height:42px}
+
+/* donations goal + team */
+.gcard{background:linear-gradient(180deg,#fff,#f3f8f4)}
+.gbar{height:14px;border-radius:8px;background:#e3ece5;overflow:hidden;margin:6px 0}
+.gbar span{display:block;height:100%;background:linear-gradient(90deg,#157347,#1f9d57);border-radius:8px}
+.grow{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.gbig{font-size:24px;font-weight:800;color:var(--g)}
+.team{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.tmem{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid var(--bd);border-radius:12px;padding:10px}
+.tph{width:58px;height:58px;border-radius:50%;object-fit:cover;flex:none;background:#eef2ef}
+.tph-ph{display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:var(--g)}
+.tnm{font-weight:700}.tds{font-size:14px;color:var(--g)}
+.tmem .tin a{display:inline-block;margin-top:2px}
+.contactrow{justify-content:space-between}
 </style>
 
 </head>
@@ -811,13 +825,21 @@ var TX = {
     jamaatTimes: 'Jamaat times', roza: 'Roza', sehri: 'Sehri ends', iftar: 'Iftar', taraweeh: 'Taraweeh', ramadanIn: 'Ramadan begins in', days: 'days', expected: 'Expected to begin around', moon: '(subject to moon sighting)',
     eidFitr: 'Eid-ul-Fitr', eidAdha: 'Eid-ul-Adha', salah: 'Salah', venue: 'Venue', daily: 'Daily', every: 'Every', after: 'After', contactP: 'Contact', past: 'Past events', noJanazah: 'No recent Janazah notices.',
     burial: 'Burial', payUpi: 'Pay with UPI app', copy: 'Copy UPI ID', copied: 'Copied', scan: 'Scan with any UPI app (GPay, PhonePe, Paytm, BHIM)', receiptNote: 'Please ask the masjid office for a receipt for your donation.',
-    about: 'About', address: 'Address', maps: 'Open in Google Maps', facilities: 'Facilities', whatsapp: 'Join our WhatsApp', call: 'Call',
+    about: 'About', aboutUs: 'About Us', aboutEmpty: 'The committee will add information about the masjid here soon.',
+  board: 'Committee / Board', youth: 'Youth Members', staff: 'Staff', helpWith: 'Can help with', whoToContact: 'Who to contact',
+  goalT: 'Fundraising goal', of: 'of', raised: 'raised', donations: 'donations', fromN: 'from %n donations',
+  iDonated: 'I have donated', iDonatedNote: 'Already paid? Share the details so the committee can confirm it and issue your receipt. It will not appear on the website.',
+  amount: 'Amount (₹)', mode: 'How did you pay?', mode_UPI: 'UPI', mode_BankTransfer: 'Bank transfer', mode_Cash: 'Cash', mode_Cheque: 'Cheque',
+  refNo: 'Reference / UTR number', refHint: 'UPI/bank reference', forFund: 'For', general: 'General / where needed', optional: 'optional',
+  sendDonation: 'Submit details', donationThanks: 'JazakAllah Khair! The committee will verify and issue your receipt, insha’Allah.',
+  getReceipt: 'Download your receipt', getReceiptNote: 'Once the committee has verified your donation, download your receipt here using the reference number and the phone you entered.',
+  downloadReceipt: 'Get receipt', receiptReady: 'Your receipt has been downloaded.', visits: 'Visits', address: 'Address', maps: 'Open in Google Maps', facilities: 'Facilities', whatsapp: 'Join our WhatsApp', call: 'Call',
     reqTitle: 'Send a request to the masjid committee', reqType: 'Request type', name: 'Your name', phone: 'Phone number', prefDate: 'Preferred date (optional)', message: 'Message', send: 'Send request',
     sent: 'JazakAllahu Khairan! Your request has been received. The committee will contact you, insha’Allah.', closed: 'Online requests are closed. Please contact the masjid office.',
     privacy: 'Your phone number is only seen by the masjid committee.', login: 'Committee login', devBy: 'Developed by Arhaan Agencies', updated: 'Last updated', method: 'Times: University of Islamic Sciences, Karachi (18°) · Asr', calcNote: 'Azan times are calculated; Jamaat times are set by the masjid committee.',
     reminderJ: 'Jamaat in', reminderIftar: 'Iftar in', reminderSehri: 'Sehri ends in', fri: 'Friday', laylat: 'Odd nights of the last ten days: Laylatul Qadr may be sought on the 21st, 23rd, 25th, 27th and 29th nights.',
     types: { 'Nikah': 'Nikah', 'Hall / venue booking': 'Hall / venue booking', 'Volunteer': 'Volunteer', 'Madrasa / Maktab admission': 'Madrasa / Maktab admission', 'Query / suggestion': 'Query / suggestion', 'Other': 'Other' } },
-  ur: {"home": "الرئيسية", "timetable": "مواقيت الصلاة", "ramadan": "رمضان", "dawat": "الدعوة والبرامج", "events": "الفعاليات", "janazah": "الجنائز", "donate": "التبرع", "contact": "اتصل بنا", "request": "طلب", "azan": "الأذان", "jamaat": "الإقامة", "today": "اليوم", "next": "القادمة", "in": "متبقية", "min": "دقيقة", "hr": "ساعة", "now": "الآن", "sunrise": "الشروق", "khutbah": "الخطبة", "jumuah": "الجمعة", "announcements": "الإعلانات", "todayProg": "برامج اليوم", "upcoming": "الفعاليات القادمة", "noEvents": "لا توجد فعاليات قادمة.", "noProg": "لا توجد برامج اليوم.", "addCal": "أضف إلى تقويمي", "share": "شارك عبر واتساب", "remindersT": "احصل على التنبيهات في هاتفك", "remindersD": "اشترك مرة واحدة في تقويم المسجد — تصلك مواعيد الجمعة والسحور والإفطار وبرامج الدعوة والفعاليات وإعلانات الجنائز على هاتفك.", "subscribe": "اشترك في تقويم Google", "ics": "تطبيقات تقويم أخرى (iCal)", "soundOn": "التنبيه الصوتي في الصفحة: مُفعَّل", "soundOff": "تفعيل التنبيه الصوتي في الصفحة", "noLoc": "ستظهر مواقيت الصلاة هنا بعد أن يحدد المسجد موقعه.", "print": "طباعة", "month": "الشهر", "date": "التاريخ", "hijri": "الهجري", "prev": "‹ السابق", "nextM": "التالي ›", "jamaatTimes": "أوقات الإقامة", "roza": "اليوم", "sehri": "نهاية السحور", "iftar": "الإفطار", "taraweeh": "التراويح", "ramadanIn": "يبدأ رمضان بعد", "days": "يوم", "expected": "البداية المتوقعة حوالي", "moon": "(حسب رؤية الهلال)", "eidFitr": "عيد الفطر", "eidAdha": "عيد الأضحى", "salah": "الصلاة", "venue": "المكان", "daily": "يوميًا", "every": "كل", "after": "بعد صلاة", "contactP": "للتواصل", "past": "الفعاليات السابقة", "noJanazah": "لا توجد إعلانات جنائز حديثة.", "burial": "الدفن", "payUpi": "ادفع عبر تطبيق UPI", "copy": "نسخ معرّف UPI", "copied": "تم النسخ", "scan": "امسح الرمز بأي تطبيق UPI (GPay، PhonePe، Paytm، BHIM)", "receiptNote": "يرجى طلب إيصال تبرعك من مكتب المسجد.", "about": "نبذة", "address": "العنوان", "maps": "افتح في خرائط Google", "facilities": "المرافق", "whatsapp": "انضم إلى مجموعة واتساب", "call": "اتصال", "reqTitle": "أرسل طلبًا إلى لجنة المسجد", "reqType": "نوع الطلب", "name": "الاسم", "phone": "رقم الهاتف", "prefDate": "التاريخ المفضل (اختياري)", "message": "الرسالة", "send": "إرسال الطلب", "sent": "جزاكم الله خيرًا! تم استلام طلبك، وستتواصل معك اللجنة إن شاء الله.", "closed": "الطلبات عبر الإنترنت مغلقة حاليًا. يرجى التواصل مع مكتب المسجد.", "login": "دخول اللجنة", "devBy": "⁦Developed by Arhaan Agencies⁩ · من تطوير: أرحان إيجنسيز", "privacy": "رقم هاتفك لا يطّلع عليه إلا لجنة المسجد.", "updated": "آخر تحديث", "method": "", "calcNote": "أوقات الأذان محسوبة، وأوقات الإقامة تحددها لجنة المسجد.", "reminderJ": "الإقامة بعد", "reminderIftar": "الإفطار بعد", "reminderSehri": "ينتهي السحور بعد", "fri": "الجمعة", "laylat": "الليالي الوترية من العشر الأواخر (21، 23، 25، 27، 29): تحرَّوا ليلة القدر.", "types": {"Nikah": "عقد نكاح", "Hall / venue booking": "حجز القاعة", "Volunteer": "تطوع", "Madrasa / Maktab admission": "التسجيل في المدرسة / الكُتّاب", "Query / suggestion": "استفسار / اقتراح", "Other": "أخرى"}}
+  ur: {"home": "الرئيسية", "timetable": "مواقيت الصلاة", "ramadan": "رمضان", "dawat": "الدعوة والبرامج", "events": "الفعاليات", "janazah": "الجنائز", "donate": "التبرع", "contact": "اتصل بنا", "request": "طلب", "azan": "الأذان", "jamaat": "الإقامة", "today": "اليوم", "next": "القادمة", "in": "متبقية", "min": "دقيقة", "hr": "ساعة", "now": "الآن", "sunrise": "الشروق", "khutbah": "الخطبة", "jumuah": "الجمعة", "announcements": "الإعلانات", "todayProg": "برامج اليوم", "upcoming": "الفعاليات القادمة", "noEvents": "لا توجد فعاليات قادمة.", "noProg": "لا توجد برامج اليوم.", "addCal": "أضف إلى تقويمي", "share": "شارك عبر واتساب", "remindersT": "احصل على التنبيهات في هاتفك", "remindersD": "اشترك مرة واحدة في تقويم المسجد — تصلك مواعيد الجمعة والسحور والإفطار وبرامج الدعوة والفعاليات وإعلانات الجنائز على هاتفك.", "subscribe": "اشترك في تقويم Google", "ics": "تطبيقات تقويم أخرى (iCal)", "soundOn": "التنبيه الصوتي في الصفحة: مُفعَّل", "soundOff": "تفعيل التنبيه الصوتي في الصفحة", "noLoc": "ستظهر مواقيت الصلاة هنا بعد أن يحدد المسجد موقعه.", "print": "طباعة", "month": "الشهر", "date": "التاريخ", "hijri": "الهجري", "prev": "‹ السابق", "nextM": "التالي ›", "jamaatTimes": "أوقات الإقامة", "roza": "اليوم", "sehri": "نهاية السحور", "iftar": "الإفطار", "taraweeh": "التراويح", "ramadanIn": "يبدأ رمضان بعد", "days": "يوم", "expected": "البداية المتوقعة حوالي", "moon": "(حسب رؤية الهلال)", "eidFitr": "عيد الفطر", "eidAdha": "عيد الأضحى", "salah": "الصلاة", "venue": "المكان", "daily": "يوميًا", "every": "كل", "after": "بعد صلاة", "contactP": "للتواصل", "past": "الفعاليات السابقة", "noJanazah": "لا توجد إعلانات جنائز حديثة.", "burial": "الدفن", "payUpi": "ادفع عبر تطبيق UPI", "copy": "نسخ معرّف UPI", "copied": "تم النسخ", "scan": "امسح الرمز بأي تطبيق UPI (GPay، PhonePe، Paytm، BHIM)", "receiptNote": "يرجى طلب إيصال تبرعك من مكتب المسجد.", "about": "نبذة", "address": "العنوان", "maps": "افتح في خرائط Google", "facilities": "المرافق", "whatsapp": "انضم إلى مجموعة واتساب", "call": "اتصال", "reqTitle": "أرسل طلبًا إلى لجنة المسجد", "reqType": "نوع الطلب", "name": "الاسم", "phone": "رقم الهاتف", "prefDate": "التاريخ المفضل (اختياري)", "message": "الرسالة", "send": "إرسال الطلب", "sent": "جزاكم الله خيرًا! تم استلام طلبك، وستتواصل معك اللجنة إن شاء الله.", "closed": "الطلبات عبر الإنترنت مغلقة حاليًا. يرجى التواصل مع مكتب المسجد.", "login": "دخول اللجنة", "devBy": "⁦Developed by Arhaan Agencies⁩ · من تطوير: أرحان إيجنسيز", "privacy": "رقم هاتفك لا يطّلع عليه إلا لجنة المسجد.", "updated": "آخر تحديث", "method": "", "calcNote": "أوقات الأذان محسوبة، وأوقات الإقامة تحددها لجنة المسجد.", "reminderJ": "الإقامة بعد", "reminderIftar": "الإفطار بعد", "reminderSehri": "ينتهي السحور بعد", "fri": "الجمعة", "laylat": "الليالي الوترية من العشر الأواخر (21، 23، 25، 27، 29): تحرَّوا ليلة القدر.", "aboutUs": "عن المسجد", "aboutEmpty": "ستضيف اللجنة معلومات عن المسجد هنا قريبًا.", "board": "اللجنة / مجلس الإدارة", "youth": "الأعضاء الشباب", "staff": "العاملون", "helpWith": "يمكنه المساعدة في", "whoToContact": "بمن تتصل", "goalT": "هدف جمع التبرعات", "of": "من", "raised": "جُمِع", "donations": "تبرع", "fromN": "من %n تبرعًا", "iDonated": "لقد تبرعت", "iDonatedNote": "هل دفعت بالفعل؟ شارك التفاصيل لتتمكن اللجنة من تأكيدها وإصدار إيصالك. لن تظهر على الموقع.", "amount": "المبلغ (₹)", "mode": "كيف دفعت؟", "mode_UPI": "UPI", "mode_BankTransfer": "تحويل بنكي", "mode_Cash": "نقدًا", "mode_Cheque": "شيك", "refNo": "رقم المرجع / UTR", "refHint": "مرجع UPI/البنك", "forFund": "لأجل", "general": "عام / حيثما يلزم", "optional": "اختياري", "sendDonation": "إرسال التفاصيل", "donationThanks": "جزاكم الله خيرًا! ستتحقق اللجنة وتصدر إيصالكم إن شاء الله.", "getReceipt": "حمّل إيصالك", "getReceiptNote": "بعد أن تتحقق اللجنة من تبرعك، حمّل إيصالك هنا باستخدام رقم المرجع والهاتف الذي أدخلته.", "downloadReceipt": "الحصول على الإيصال", "receiptReady": "تم تنزيل إيصالك.", "visits": "الزيارات", "types": {"Nikah": "عقد نكاح", "Hall / venue booking": "حجز القاعة", "Volunteer": "تطوع", "Madrasa / Maktab admission": "التسجيل في المدرسة / الكُتّاب", "Query / suggestion": "استفسار / اقتراح", "Other": "أخرى"}}
 };
 if (typeof DAILY !== 'undefined') ['en', 'ur'].forEach(function (l) { Object.keys(DAILY.ui[l]).forEach(function (k) { if (!TX[l][k]) TX[l][k] = DAILY.ui[l][k]; }); });
 TX.en.hiT = 'Hindi meaning'; TX.en.teT = 'Telugu meaning'; TX.en.urMeanT = 'Urdu meaning'; TX.en.ayah = 'Ayah';
@@ -908,7 +930,7 @@ function toast(m) { var t = $('#toast'); t.textContent = m; t.classList.remove('
 /* =====================================================================
  * Pages
  * ===================================================================== */
-var PAGES = ['home', 'timetable', 'ramadan', 'quran', 'hadith', 'duas', 'guide', 'dawat', 'events', 'janazah', 'donate', 'contact', 'request'];
+var PAGES = ['home', 'timetable', 'ramadan', 'quran', 'hadith', 'duas', 'guide', 'dawat', 'events', 'janazah', 'donate', 'about', 'contact', 'request'];
 function render() {
   document.documentElement.lang = ST.lang === 'ur' ? 'ar' : 'en'; document.documentElement.dir = ST.lang === 'ur' ? 'rtl' : 'ltr';
   $('#langBtn').textContent = ST.lang === 'ur' ? 'English' : 'العربية';
@@ -924,7 +946,10 @@ function render() {
   $('#main').innerHTML = fn();
   if (AFTER[ST.page]) AFTER[ST.page]();
   bindCommon();
-  $('#foot').innerHTML = esc(T('calcNote')) + '<br>' + esc(T('updated')) + ': ' + esc(D.generatedAt || '') + '<br><span class="credit">' + esc(T('devBy')) + '</span>' + (appUrl() ? '<br><a class="loginlink" target="_top" href="' + esc(appUrl()) + '">\ud83d\udd12 ' + esc(T('login')) + '</a>' : '');
+  var vis = (window.__visits != null ? window.__visits : D.visits);
+  $('#foot').innerHTML = esc(T('calcNote')) + '<br>' + esc(T('updated')) + ': ' + esc(D.generatedAt || '') +
+    (vis != null ? '<br>' + esc(T('visits')) + ': ' + iso(Number(vis).toLocaleString('en-IN')) : '') +
+    '<br><span class="credit">' + esc(T('devBy')) + '</span>' + (appUrl() ? '<br><a class="loginlink" target="_top" href="' + esc(appUrl()) + '">\ud83d\udd12 ' + esc(T('login')) + '</a>' : '');
   var lb = $('#loginBtn'); if (lb) { if (appUrl()) { lb.href = appUrl(); lb.textContent = '\ud83d\udd12 ' + T('login'); lb.classList.remove('hidden'); } else lb.classList.add('hidden'); }
 }
 function bindCommon() {
@@ -1331,23 +1356,111 @@ VIEW.janazah = function () {
     (j.length ? j.map(janazahHtml).join('') : '<p class="muted">' + esc(T('noJanazah')) + '</p>') + '</div></div>';
 };
 
+function money_(n) { n = Number(n) || 0; return '₹' + n.toLocaleString('en-IN', { maximumFractionDigits: 0 }); }
+function goalCard() {
+  var st = (D.donate && D.donate.stats) || {};
+  if (!st.show && !(st.goal > 0)) return '';
+  var h = '<div class="card gcard">';
+  if (st.goal > 0) {
+    var pct = Math.max(0, Math.min(100, Math.round((st.raised || 0) / st.goal * 100)));
+    h += '<h3 style="margin-bottom:6px">' + esc(L(st.goalLabel, st.goalLabelUr) || T('goalT')) + '</h3>' +
+      '<div class="gbar"><span style="width:' + pct + '%"></span></div>' +
+      '<div class="grow"><b>' + money_(st.raised) + '</b><span class="muted">' + esc(T('of')) + ' ' + money_(st.goal) + ' · ' + pct + '%</span></div>';
+  } else if (st.show) {
+    h += '<div class="grow"><div><div class="gbig">' + money_(st.raised) + '</div><div class="small muted">' + esc(T('raised')) + '</div></div>' +
+      '<div style="text-align:end"><div class="gbig">' + iso(String(st.donors || 0)) + '</div><div class="small muted">' + esc(T('donations')) + '</div></div></div>';
+  }
+  if (st.goal > 0 && st.show) h += '<p class="small muted" style="margin-top:8px">' + esc(T('fromN').replace('%n', iso(String(st.donors || 0)))) + '</p>';
+  return h + '</div>';
+}
 VIEW.donate = function () {
   var d = D.donate || {}, upi = /^[a-zA-Z0-9.\-_]{2,64}@[a-zA-Z]{2,64}$/.test(d.upiId || '') ? d.upiId : '';
   var qr = /^data:image\/(png|jpeg);base64,[A-Za-z0-9+/=]+$/.test(d.qr || '') ? d.qr : '';
   var link = upi ? 'upi://pay?pa=' + encodeURIComponent(upi) + '&pn=' + encodeURIComponent(d.payee || D.masjid.name) + '&cu=INR&tn=' + encodeURIComponent('Donation') : '';
-  return '<div class="card" style="text-align:center"><h2>' + esc(T('donate')) + '</h2>' +
+  var h = goalCard() +
+    '<div class="card" style="text-align:center"><h2>' + esc(T('donate')) + '</h2>' +
     (qr ? '<img class="qr" alt="UPI QR" src="' + esc(qr) + '"><p class="small muted">' + esc(T('scan')) + '</p>' : '') +
     (upi ? '<p style="font-size:18px"><b>' + esc(upi) + '</b><br><span class="small muted">' + esc(d.payee || '') + '</span></p><div class="btns" style="justify-content:center"><a class="btn pri" href="' + esc(link) + '">' + esc(T('payUpi')) + '</a><button class="btn" id="cpUpi">' + esc(T('copy')) + '</button></div>' : '') +
     (d.note ? '<p style="text-align:start">' + nl(d.note) + '</p>' : '') + (d.reg ? '<p class="small muted">Reg. No: ' + esc(d.reg) + '</p>' : '') + (d.tax ? '<p class="small muted">' + esc(d.tax) + '</p>' : '') +
     '<p class="small muted">' + esc(T('receiptNote')) + '</p></div>';
+  // "I have donated" form
+  if (d.direct) {
+    var funds = (d.funds || []).filter(function (f) { return f && f.id; });
+    h += '<div class="card"><h2>' + esc(T('iDonated')) + '</h2><p class="small muted">' + esc(T('iDonatedNote')) + '</p><form id="dnf" autocomplete="on">' +
+      '<label>' + esc(T('name')) + '<input name="name" required maxlength="80" autocomplete="name"></label>' +
+      '<label>' + esc(T('phone')) + '<input name="phone" type="tel" required maxlength="20" autocomplete="tel" placeholder="98xxxxxxxx"></label>' +
+      '<label>' + esc(T('amount')) + '<input name="amount" type="number" min="1" step="1" inputmode="numeric" required></label>' +
+      '<label>' + esc(T('mode')) + '<select name="mode">' + ['UPI', 'Bank Transfer', 'Cash', 'Cheque'].map(function (m) { return '<option value="' + m + '">' + esc(T('mode_' + m.replace(' ', '')) || m) + '</option>'; }).join('') + '</select></label>' +
+      '<label>' + esc(T('refNo')) + '<input name="reference" maxlength="40" placeholder="' + esc(T('refHint')) + '"></label>' +
+      (funds.length ? '<label>' + esc(T('forFund')) + '<select name="fund"><option value="">' + esc(T('general')) + '</option>' + funds.map(function (f) { return '<option value="' + esc(f.id) + '">' + esc(f.name) + '</option>'; }).join('') + '</select></label>' : '') +
+      '<label>' + esc(T('message')) + ' (' + esc(T('optional')) + ')<textarea name="message" maxlength="500"></textarea></label>' +
+      '<div class="hp" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>' +
+      '<p class="small muted">' + esc(T('privacy')) + '</p><button class="btn pri" type="submit">' + esc(T('sendDonation')) + '</button> <span id="dnMsg" class="small"></span></form></div>';
+  }
+  // receipt lookup
+  h += '<div class="card"><h2>' + esc(T('getReceipt')) + '</h2><p class="small muted">' + esc(T('getReceiptNote')) + '</p><form id="rcf">' +
+    '<label>' + esc(T('refNo')) + '<input name="ref" required maxlength="40"></label>' +
+    '<label>' + esc(T('phone')) + '<input name="phone" type="tel" required maxlength="20"></label>' +
+    '<button class="btn" type="submit">' + esc(T('downloadReceipt')) + '</button> <span id="rcMsg" class="small"></span></form></div>';
+  return h;
 };
+var DN_LOADED = Date.now();
 AFTER.donate = function () {
-  var b = $('#cpUpi'); if (!b) return;
-  b.onclick = function () {
+  var b = $('#cpUpi'); if (b) b.onclick = function () {
     var v = D.donate.upiId;
     try { navigator.clipboard.writeText(v).then(function () { toast(T('copied')); }, function () { prompt('UPI', v); }); } catch (e) { prompt('UPI', v); }
   };
+  var f = $('#dnf');
+  if (f) f.onsubmit = function (ev) {
+    ev.preventDefault(); var btn = f.querySelector('button'), msg = $('#dnMsg');
+    var data = { name: f.name.value, phone: f.phone.value, amount: f.amount.value, mode: f.mode.value, reference: f.reference.value, fund: f.fund ? f.fund.value : '', message: f.message.value, website: f.website.value, t: Date.now() - DN_LOADED };
+    btn.disabled = true; msg.textContent = '…'; msg.className = 'small';
+    google.script.run.withSuccessHandler(function () { f.reset(); btn.disabled = false; msg.textContent = T('donationThanks'); msg.className = 'small ok'; })
+      .withFailureHandler(function (e) { btn.disabled = false; msg.textContent = String((e && e.message) || e).replace(/^(Exception|Error):\s*/, ''); msg.className = 'small err'; })
+      .submitDonation(data);
+  };
+  var rf = $('#rcf');
+  if (rf) rf.onsubmit = function (ev) {
+    ev.preventDefault(); var btn = rf.querySelector('button'), msg = $('#rcMsg');
+    btn.disabled = true; msg.textContent = '…'; msg.className = 'small';
+    google.script.run.withSuccessHandler(function (r) {
+      btn.disabled = false; msg.textContent = '';
+      try {
+        var bin = atob(r.data), arr = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+        var url = URL.createObjectURL(new Blob([arr], { type: r.mimeType })), a = document.createElement('a');
+        a.href = url; a.download = r.name || 'receipt.pdf'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+        msg.textContent = T('receiptReady'); msg.className = 'small ok';
+      } catch (e) { msg.textContent = T('receiptReady'); msg.className = 'small ok'; }
+    }).withFailureHandler(function (e) { btn.disabled = false; msg.textContent = String((e && e.message) || e).replace(/^(Exception|Error):\s*/, ''); msg.className = 'small err'; })
+      .donationReceipt(rf.ref.value, rf.phone.value);
+  };
 };
+
+VIEW.about = function () {
+  if (!window.__team) return '<div class="card"><p class="muted">' + esc(T('loading')) + '</p></div>';
+  var team = window.__team, m = D.masjid, U = ST.lang;
+  var cats = [['Board', T('board')], ['Youth', T('youth')], ['Staff', T('staff')]];
+  var h = '<div class="card"><h2>' + esc(T('aboutUs')) + '</h2>' + (L(m.about, m.aboutUr) ? '<p>' + nl(L(m.about, m.aboutUr)) + '</p>' : '<p class="muted">' + esc(T('aboutEmpty')) + '</p>') + '</div>';
+  cats.forEach(function (c) {
+    var list = team.filter(function (p) { return p.category === c[0]; });
+    if (!list.length) return;
+    h += '<div class="card"><h2>' + esc(c[1]) + '</h2><div class="team">' + list.map(function (p) {
+      var nm = L(p.name, p.nameUr), des = L(p.designation, p.designationUr), ph = /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(p.photo || '') ? p.photo : '';
+      return '<div class="tmem">' + (ph ? '<img class="tph" alt="" src="' + esc(ph) + '">' : '<div class="tph tph-ph">' + esc((nm || '?').slice(0, 1)) + '</div>') +
+        '<div class="tin"><div class="tnm">' + esc(nm) + '</div>' + (des ? '<div class="tds">' + esc(des) + '</div>' : '') +
+        (p.contactFor ? '<div class="small muted">' + esc(T('helpWith')) + ': ' + esc(L(p.contactFor, p.contactForUr)) + '</div>' : '') +
+        (p.phone ? '<a class="small" href="tel:' + esc(String(p.phone).replace(/[^\d+]/g, '')) + '">☎ ' + esc(p.phone) + '</a>' : '') + '</div></div>';
+    }).join('') + '</div></div>';
+  });
+  return h;
+};
+AFTER.about = function () { loadTeam(); };
+function loadTeam() {
+  if (window.__team) return;
+  google.script.run.withSuccessHandler(function (t) { window.__team = Array.isArray(t) ? t : []; if (ST.page === 'about' || ST.page === 'contact') render(); })
+    .withFailureHandler(function () { window.__team = []; if (ST.page === 'about' || ST.page === 'contact') render(); })
+    .getTeam();
+}
 
 VIEW.contact = function () {
   var m = D.masjid, maps = safeUrl(m.mapsLink) || (hasLoc() ? 'https://www.google.com/maps?q=' + D.calc.lat + ',' + D.calc.lng : '');
@@ -1358,9 +1471,21 @@ VIEW.contact = function () {
     (phone ? '<a class="btn" href="tel:' + esc(phone) + '">☎ ' + esc(T('call')) + ' ' + esc(m.phone) + '</a>' : '') +
     (/^[^\s@<>"']+@[^\s@<>"']+$/.test(m.email || '') ? '<a class="btn" href="mailto:' + esc(m.email) + '">✉ ' + esc(m.email) + '</a>' : '') +
     (safeUrl(m.whatsapp) ? '<a class="btn" target="_blank" rel="noopener" href="' + esc(safeUrl(m.whatsapp)) + '">' + esc(T('whatsapp')) + '</a>' : '') + '</div></div>' +
+    whoToContact() +
     (m.contacts ? '<div class="card"><h2>' + esc(T('contactP')) + '</h2><p>' + nl(m.contacts) + '</p></div>' : '') +
     (m.facilities ? '<div class="card"><h2>' + esc(T('facilities')) + '</h2><p>' + nl(m.facilities) + '</p></div>' : '');
 };
+function whoToContact() {
+  var team = window.__team; if (!team) { loadTeam(); return ''; }
+  var list = team.filter(function (p) { return p.contactFor && p.phone; });
+  if (!list.length) return '';
+  return '<div class="card"><h2>' + esc(T('whoToContact')) + '</h2><div class="team">' + list.map(function (p) {
+    return '<div class="tmem contactrow"><div class="tin"><div class="tnm">' + esc(L(p.name, p.nameUr)) + '</div>' +
+      '<div class="small muted">' + esc(L(p.contactFor, p.contactForUr)) + '</div></div>' +
+      '<a class="btn" href="tel:' + esc(String(p.phone).replace(/[^\d+]/g, '')) + '">☎ ' + esc(T('call')) + '</a></div>';
+  }).join('') + '</div></div>';
+}
+AFTER.contact = function () { loadTeam(); };
 
 VIEW.request = function () {
   if (!D.masjid.formsEnabled) return '<div class="card"><p>' + esc(T('closed')) + '</p></div>';
@@ -1427,6 +1552,15 @@ if (PAGES.indexOf(ST.page) < 0) ST.page = 'home';
 render();
 setInterval(tick, 20000); tick();
 setInterval(refreshData, 15 * 60000);
+// count one visit per browser session (cheap: one call, then remembered)
+(function countVisit() {
+  try { if (sessionStorage.getItem('mnl_counted')) return; } catch (e) { }
+  if (!(window.google && google.script && google.script.run && google.script.run.bumpVisit)) return;
+  google.script.run.withSuccessHandler(function (r) {
+    try { sessionStorage.setItem('mnl_counted', '1'); } catch (e) { }
+    if (r && r.visits != null) { window.__visits = r.visits; if (typeof renderFoot === 'function') renderFoot(); else render(); }
+  }).withFailureHandler(function () { }).bumpVisit();
+})();
 </script>
 <script>
 (function () {

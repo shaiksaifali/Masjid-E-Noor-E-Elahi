@@ -545,7 +545,8 @@ const MENU = [
   ['Reports', [['reports', 'Financial Reports', 'reports.view'], ['brs', 'Bank Reconciliation', 'reports.view'], ['receipts', 'Receipts', 'receipts.view']]],
   ['Community Website', [['community', 'Community Home', 'community.edit'], ['cjamaat', 'Jamaat Times', 'community.edit'], ['cannounce', 'Announcements', 'community.edit'],
     ['cevents', 'Events', 'community.edit'], ['cprograms', 'Dawat & Programmes', 'community.edit'], ['cjanazah', 'Janazah', 'community.edit'],
-    ['cramadan', 'Ramadan & Eid', 'community.edit'], ['csettings', 'Website Settings', 'community.edit'], ['crequests', 'Requests', 'community.requests']]],
+    ['cramadan', 'Ramadan & Eid', 'community.edit'], ['cteam', 'About & Team', 'community.edit'], ['csettings', 'Website Settings', 'community.edit'],
+    ['cdonations', 'Donations (verify)', 'income.create'], ['crequests', 'Requests', 'community.requests']]],
   ['Administration', [['users', 'Users & Roles', 'users.manage'], ['settings', 'Settings', 'settings.edit'], ['audit', 'Audit Log', 'audit.view'], ['system', 'Backup & Quotas', 'system.admin']]]
 ];
 function firstView() { for (const g of MENU) for (const i of g[1]) if (allowed(i[2])) return i[0]; return 'dashboard'; }
@@ -1450,7 +1451,8 @@ const WEB_GROUPS = [
   ['Location & calculation', ['LATITUDE', 'LONGITUDE', 'MAPS_LINK', 'ASR_METHOD', 'FAJR_ANGLE', 'ISHA_ANGLE', 'HIJRI_ADJUST']],
   ['Jumu’ah', ['JUMUAH_AZAN_TIME', 'JUMUAH_KHUTBAH_TIME', 'JUMUAH_JAMAAT_TIME']],
   ['About & contact', ['MASJID_NAME_UR', 'ABOUT_TEXT', 'ABOUT_TEXT_UR', 'PUBLIC_CONTACTS', 'FACILITIES', 'WHATSAPP_LINK', 'PUBLIC_SITE_URL', 'ADMIN_APP_URL', 'SHOW_COMMITTEE_LOGIN', 'FORMS_ENABLED']],
-  ['Donations', ['UPI_ID', 'UPI_PAYEE_NAME', 'DONATE_NOTE']]
+  ['Donations', ['UPI_ID', 'UPI_PAYEE_NAME', 'DONATE_NOTE', 'DIRECT_DONATION_ENABLED', 'DONATE_SHOW_TOTAL', 'DONATE_TOTAL_FUND', 'DONATE_GOAL_ENABLED', 'DONATE_GOAL', 'DONATE_GOAL_LABEL', 'DONATE_GOAL_LABEL_UR']],
+  ['Website extras', ['SHOW_VISITS']]
 ];
 function parseCoords(txt) {
   txt = String(txt || '');
@@ -1511,6 +1513,91 @@ VIEWS.crequests = { perm: 'community.requests', fn: (el, params) => {
       .then(v => v !== null && call('community.requestUpdate', { ReqID: r.ReqID, Status: { p: 'In progress', d: 'Done', s: 'Spam' }[a], Note: v === true ? '' : v }).then(() => { toast('Updated.', 's'); go('crequests', { Status: status }); }).catch(fail))
   })).catch(fail);
 } };
+
+/* ---------- Donations submitted on the website (verify → posts to accounts) ---------- */
+VIEWS.cdonations = { perm: 'income.create', fn: (el, params) => {
+  const status = params.Status === undefined ? 'New' : params.Status;
+  el.innerHTML = head('Donations from the website', 'Visitors report donations they have made. Verify against your bank/UPI, then it posts to the accounts and a receipt is issued. Fake entries never affect the books until you verify.') +
+    '<div class="tabs">' + [['New', 'To verify'], ['Verified', 'Verified'], ['Rejected', 'Rejected'], ['', 'All']].map(x => '<button data-s="' + x[0] + '" class="' + (x[0] === status ? 'on' : '') + '">' + x[1] + '</button>').join('') + '</div><div class="card" id="dnl">Loading…</div>';
+  $$('.tabs button', el).forEach(b => b.onclick = () => go('cdonations', { Status: b.dataset.s }));
+  call('donations.list', { Status: status }).then(rows => table($('#dnl'), [
+    { k: 'SubmittedAt', l: 'Received', f: r => esc(dmy(r.SubmittedAt)) },
+    { k: 'Name', l: 'Donor' }, { k: 'Phone', l: 'Phone', f: r => '<a href="tel:' + esc(String(r.Phone).replace(/[^\d+]/g, '')) + '">' + esc(r.Phone) + '</a>' },
+    { k: 'Amount', l: 'Amount', f: r => '<b>₹' + esc(Number(r.Amount).toLocaleString('en-IN')) + '</b>' },
+    { k: 'Mode', l: 'Mode' }, { k: 'Reference', l: 'Reference', f: r => '<span class="small">' + esc(r.Reference || '—') + '</span>' },
+    { k: 'Message', l: 'Note', f: r => '<span class="small">' + esc(r.Message || '') + '</span>' },
+    { k: 'Status', l: 'Status', f: r => esc(r.Status) + (r.VoucherNo ? '<div class="muted small">' + esc(r.VoucherNo) + '</div>' : '') + (r.VerifiedBy ? '<div class="muted small">' + esc(r.VerifiedBy) + (r.Note ? ': ' + esc(r.Note) : '') + '</div>' : '') }], rows, {
+    csv: 'website-donations', empty: 'No donations here.',
+    actions: r => r.Status === 'New' ? (act('v', 'Verify & post', 'primary') + act('x', 'Reject', 'danger')) : (r.ReceiptID ? act('r', 'Receipt') : ''),
+    onAction: (a, r) => {
+      if (a === 'r') return call('receipt.pdf', { ReceiptID: r.ReceiptID }).then(openPdf).catch(fail);
+      if (a === 'x') return ask('Reject donation', 'Reject this reported donation? It will not post to the accounts.', { input: 'Reason', ok: 'Reject' })
+        .then(v => v && call('donations.reject', { DonID: r.DonID, Note: v === true ? 'Rejected' : v }).then(() => { toast('Rejected.', 's'); go('cdonations', { Status: status }); }).catch(fail));
+      // verify: pick the income ledger + account the money landed in
+      const inc = (S.b.ledgers || []).filter(l => l.Nature === 'Income' && l.Status === 'Active');
+      const accs = (S.b.accounts || []).filter(a2 => a2.Status !== 'Inactive');
+      if (!inc.length || !accs.length) return toast('Add an income ledger and a cash/bank account first.', 'e');
+      const guessAcc = accs.find(a2 => (r.Mode === 'Cash') ? a2.Type === 'Cash' : a2.Type === 'Bank') || accs[0];
+      modal('Verify donation — ₹' + Number(r.Amount).toLocaleString('en-IN') + ' from ' + esc(r.Name),
+        formHtml([
+          { n: 'LedgerID', l: 'Income head', t: 'select', req: true, o: inc.map(l => '<option value="' + l.LedgerID + '">' + esc(l.Name) + '</option>').join('') },
+          { n: 'AccountID', l: 'Received into', t: 'select', req: true, o: accs.map(a2 => '<option value="' + a2.AccountID + '"' + (a2.AccountID === guessAcc.AccountID ? ' selected' : '') + '>' + esc(a2.Name) + '</option>').join('') },
+          { n: 'Date', l: 'Date received', t: 'date', v: r.SubmittedAt ? r.SubmittedAt.slice(0, 10) : today() },
+          { n: 'Note', l: 'Note (optional)', full: true }
+        ], {}, 'Verify & post'), b => {
+          $('form', b).onsubmit = ev => { ev.preventDefault(); const f = readForm(ev.target);
+            call('donations.verify', { DonID: r.DonID, LedgerID: f.LedgerID, AccountID: f.AccountID, Date: f.Date, Note: f.Note })
+              .then(() => { closeModal(); toast('Posted to accounts. Receipt ready.', 's'); go('cdonations', { Status: status }); }).catch(fail); };
+        });
+    }
+  })).catch(fail);
+} };
+function openPdf(r) { try { const bin = atob(r.data), arr = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i); const url = URL.createObjectURL(new Blob([arr], { type: r.mimeType })); window.open(url, '_blank'); setTimeout(() => URL.revokeObjectURL(url), 8000); } catch (e) { toast('Could not open the file.', 'e'); } }
+
+/* ---------- About Us / Contact: board & youth members ---------- */
+VIEWS.cteam = { perm: 'community.edit', fn: el => {
+  el.innerHTML = head('About & Team', 'Board members, youth members and staff shown on the website’s About and Contact pages. Add a photo, designation, and who to contact them for.') +
+    '<div class="actions"><button class="btn primary" id="addMem">+ Add member</button></div><div class="card" id="tml">Loading…</div>';
+  $('#addMem').onclick = () => teamForm({});
+  call('community').then(d => {
+    const rows = (d.team || []);
+    table($('#tml'), [
+      { k: 'photo', l: '', f: r => '' }, { k: 'Name', l: 'Name', f: r => esc(r.Name) + (r.NameUr ? ' <span class="muted">' + esc(r.NameUr) + '</span>' : '') },
+      { k: 'Category', l: 'Group' }, { k: 'Designation', l: 'Designation' }, { k: 'ContactFor', l: 'Contact for', f: r => '<span class="small">' + esc(r.ContactFor || '') + '</span>' },
+      { k: 'Phone', l: 'Phone', f: r => r.Phone ? esc(r.Phone) + (r.ShowPhone === 'YES' ? '' : ' <span class="muted small">(hidden)</span>') : '' },
+      { k: 'Status', l: 'Status' }], rows, {
+      empty: 'No members yet. Click “Add member”.',
+      actions: r => act('e', 'Edit'),
+      onAction: (a, r) => teamForm(r)
+    });
+  }).catch(fail);
+} };
+function teamForm(r) {
+  const cat = c => '<option value="' + c + '"' + (r.Category === c ? ' selected' : '') + '>' + c + '</option>';
+  modal(r.PersonID ? 'Edit member' : 'Add member',
+    formHtml([
+      { n: 'Category', l: 'Group', t: 'select', o: cat('Board') + cat('Youth') + cat('Staff') },
+      { n: 'Name', l: 'Name', req: true, v: r.Name },
+      { n: 'NameUr', l: 'Name (Arabic)', v: r.NameUr, attrs: ' dir="rtl"' },
+      { n: 'Designation', l: 'Designation', v: r.Designation, ph: 'e.g. President, Secretary' },
+      { n: 'DesignationUr', l: 'Designation (Arabic)', v: r.DesignationUr, attrs: ' dir="rtl"' },
+      { n: 'ContactFor', l: 'Can help with', v: r.ContactFor, full: true, ph: 'e.g. Nikah, hall booking' },
+      { n: 'ContactForUr', l: 'Can help with (Arabic)', v: r.ContactForUr, full: true, attrs: ' dir="rtl"' },
+      { n: 'Phone', l: 'Phone', v: r.Phone, ph: '98xxxxxxxx' },
+      { n: 'ShowPhone', l: 'Show phone on the website', t: 'checkbox', v: r.ShowPhone === 'YES' },
+      { n: 'SortOrder', l: 'Sort order (low = first)', t: 'number', step: '1', v: r.SortOrder || '0' },
+      { n: 'Status', l: 'Status', t: 'select', o: ['Active', 'Inactive'].map(x => '<option' + (r.Status === x ? ' selected' : '') + '>' + x + '</option>').join('') },
+      { n: 'photo', l: 'Photo (JPG/PNG, optional)', t: 'file', full: true }
+    ], {}, 'Save member'), b => {
+      if (r.PhotoFileID) b.insertAdjacentHTML('afterbegin', '<p class="small muted">A photo is already set. Choose a new one to replace it.</p>');
+      $('form', b).onsubmit = ev => { ev.preventDefault(); const f = readForm(ev.target);
+        readFile($('input[name=photo]', b)).then(file => {
+          const p = Object.assign({ PersonID: r.PersonID || '' }, f); if (file) p.file = file;
+          return call('community.team', p);
+        }).then(() => { closeModal(); toast('Saved.', 's'); go('cteam'); }).catch(fail); };
+    });
+}
+
 </script>
 
 </body>
