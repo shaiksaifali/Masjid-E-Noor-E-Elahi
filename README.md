@@ -1,8 +1,8 @@
 # Masjid-E-Noor-Elahi — website
 
-Community website (`/`) and committee login (`/admin/`) for Masjid-E-Noor-Elahi, served free by GitHub Pages.
-The data and all security checks live in Google Apps Script; these pages only show them.
+Community website (`/`) and committee login (`/admin/`), served free by GitHub Pages.
+All data and all security checks live in the masjid's Google Apps Script; these pages only display them.
 
-**The only file to edit is `config.js`**: paste the two Apps Script web-app links (ending in `/exec`).
+**The only file to edit is `config.js`**: paste the Apps Script web-app link (ending in `/exec`).
 
 Developed by Arhaan Agencies.

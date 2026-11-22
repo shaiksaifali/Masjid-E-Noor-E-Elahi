@@ -6,9 +6,10 @@
 (function () {
   'use strict';
   var C = window.MASJID_CONFIG || {};
+  var LINK = C.api || C.appApi || C.siteApi; // one Apps Script project serves everything
   var GAS_URL = /^https:\/\/script\.google\.com\/(a\/[^\/\s]+\/)?macros\/s\/[\w-]+\/exec$/;
-  function need(url, what) {
-    if (!GAS_URL.test(String(url || ''))) throw new Error('Setup needed: paste the ' + what + ' web-app link (…/exec) into config.js on GitHub.');
+  function need(url) {
+    if (!GAS_URL.test(String(url || ''))) throw new Error('Setup needed: paste the web-app link (…/exec) into config.js on GitHub.');
     return url;
   }
   function friendly(e) {
@@ -34,11 +35,11 @@
       .then(read).catch(function (e) { throw friendly(e); });
   }
   var API = {
-    api: function (token, action, payload) { return post(need(C.appApi, 'committee app'), { fn: 'api', token: token, action: action, payload: payload }); },
-    apiLogin: function (email, password) { return post(need(C.appApi, 'committee app'), { fn: 'apiLogin', email: email, password: password }); },
-    getSnapshot: function () { return get(need(C.siteApi, 'website') + '?api=snapshot'); },
-    submitRequest: function (form) { return post(need(C.siteApi, 'website'), { fn: 'submitRequest', form: form }); },
-    appInfo: function () { return get(need(C.appApi, 'committee app') + '?api=info'); }
+    api: function (token, action, payload) { return post(need(LINK), { fn: 'api', token: token, action: action, payload: payload }); },
+    apiLogin: function (email, password, boot) { return post(need(LINK), { fn: 'apiLogin', email: email, password: password, boot: boot === true }); },
+    getSnapshot: function () { return get(need(LINK) + '?api=snapshot'); },
+    submitRequest: function (form) { return post(need(LINK), { fn: 'submitRequest', form: form }); },
+    appInfo: function () { return get(need(LINK) + '?api=info'); }
   };
   window.MASJID_API = API;
   function runner(ok, bad) {
