@@ -5,7 +5,7 @@
 window.MASJID_CONFIG = {
   name: 'Masjid-E-Noor-Elahi',
 
-  api: 'https://script.google.com/macros/s/AKfycbzI78FaCTbOZGol-nfaUQLhnw6_Yseq4DPQUfbPkUZ56KT_zNtsFkQtx1wNOWL2hp51Lw/exec',
+  api: 'PASTE-YOUR-WEB-APP-LINK-HERE',
 
   // Leave these as they are
   loginUrl: 'admin/',
